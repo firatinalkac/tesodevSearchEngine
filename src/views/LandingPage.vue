@@ -18,8 +18,12 @@
           class="border border-dark rounded-3 py-2 px-4 mt-2 d-flex flex-column justify-content-center"
         >
           <div class="pb-2" v-for="(item, index) in filterData.slice(0, 3)" :key="index">
-            <div class="border-bottom border-dark pt-3">
-              {{ item.name }}
+            <div class="border-bottom border-dark pt-3 d-flex justify-content-between pb-1">
+              <div class="d-flex flex-column fw-bold">
+                <span>{{ item.name }}</span>
+                <span class="fs-12 text-secondary">Jane Doe - 2016</span>
+              </div>
+              <div class="pe-5 fw-bold">Yaş: {{ item.age }}</div>
             </div>
           </div>
           <div v-if="filterData.length < 1">
