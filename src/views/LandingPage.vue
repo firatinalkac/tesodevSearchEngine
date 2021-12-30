@@ -6,12 +6,22 @@
     </div>
     <div class="d-flex gap-3 mt-5">
       <div>
-        <TesodevInput @change="onFilter" @keyup="onFilter" v-model="search" width="40rem" placeholder="Search" />
+        <TesodevInput
+          @change="onFilter(search, data)"
+          @keyup="onFilter(search, data)"
+          v-model="search"
+          width="40rem"
+          placeholder="Search"
+        />
         <div
           v-if="search"
           class="border border-dark rounded-3 py-2 px-4 mt-2 d-flex flex-column justify-content-center"
         >
-          <div v-for="(item, index) in filterData.slice(0, 3)" :key="index">{{ item.name }}</div>
+          <div class="pb-2" v-for="(item, index) in filterData.slice(0, 3)" :key="index">
+            <div class="border-bottom border-dark pt-3">
+              {{ item.name }}
+            </div>
+          </div>
           <div v-if="filterData.length < 1">
             <div class="alert alert-warning">Sonuç Bulunamadı.</div>
           </div>
@@ -19,9 +29,9 @@
             v-else
             :to="{ name: 'ListPage', query: { filter: search ? search : null } }"
             role="button"
-            class="fw-bolder text-center fs-12 text-decoration-none text-dark"
+            class="fw-bolder text-center fs-12 text-decoration-none text-dark pt-4"
           >
-            {{ filterData.length > 3 ? 'Show more...' : 'Show Detail' }}
+            {{ filterData.length > 3 ? 'Show more...' : 'Show Detail...' }}
           </router-link>
         </div>
       </div>
@@ -35,11 +45,13 @@
 <script>
 import { defineComponent, reactive, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
+import filter from '../plugins/filter';
 
 export default defineComponent({
   setup() {
     const state = reactive({
       search: null,
+      ...filter(),
       router: useRouter(),
       data: [
         { name: 'Ahmet', age: '12' },
@@ -52,24 +64,9 @@ export default defineComponent({
         { name: 'Akif', age: '22' },
         { name: 'Ali', age: '23' },
       ],
-      filterData: null,
     });
-    function onFilter() {
-      if (state.search && state.search.length > 0) {
-        state.filterData = state.data.filter((item) => {
-          const val = state.search.toLowerCase();
-          const title = item.name && item.name.toLowerCase();
-          if (val && title.indexOf(val) !== -1) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-      }
-    }
     return {
       ...toRefs(state),
-      onFilter,
     };
   },
 });
