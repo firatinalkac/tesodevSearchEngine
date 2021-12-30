@@ -21,7 +21,7 @@
             </div>
           </div>
           <div v-if="filteredData.length < 1">
-            <div class="alert alert-warning">Sonuç Bulunamadı.</div>
+            <div class="alert alert-warning">There were no results.</div>
           </div>
           <router-link
             v-else
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, reactive, toRefs, watch } from 'vue';
+import { computed, defineComponent, reactive, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 import filter from '../plugins/filter';
@@ -68,9 +68,7 @@ export default defineComponent({
     const filteredData = computed(function () {
       return onFilter(state.search, state.data);
     });
-    watch(state.search, () => {
-      console.log('asdasd');
-    });
+
     return {
       ...toRefs(state),
       filteredData,

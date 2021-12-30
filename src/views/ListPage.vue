@@ -8,10 +8,34 @@
       <TesodevButton @click="router.replace({ query: { filter: listSearch } })" rounded secondary class="px-4"
         >Search</TesodevButton
       >
+
       <button @click="resetSearch" class="btn btn-danger">Temizle</button>
     </div>
     <div class="mt-5">
-      <tesodev-table :header="header" :data="filteredData" :orderItems="orderList"> </tesodev-table>
+      <tesodev-table :header="header" :data="filteredData">
+        <template #tableHeader>
+          <div class="dropdown d-flex justify-content-end">
+            <span
+              class="dropdown-toggle"
+              type="button"
+              id="dropdownMenuButton1"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <img :src="require('@/assets/images/icons/order-icon.svg')" alt="order" />
+            </span>
+            <ul class="dropdown-menu p-2 border-dark rounded-3" aria-labelledby="dropdownMenuButton1">
+              <li
+                v-for="(item, index) in orderList"
+                :key="index"
+                @click="item.value === 'age' ? sortAge(item.orderBy) : sortName(item.orderBy)"
+              >
+                <span role="button" class="dropdown-item"> {{ item.text }} </span>
+              </li>
+            </ul>
+          </div>
+        </template>
+      </tesodev-table>
     </div>
   </div>
 </template>
@@ -28,10 +52,10 @@ export default defineComponent({
     const state = reactive({
       header: [{ value: 'name' }, { value: 'age' }],
       orderList: [
-        { text: 'Name ascending', value: 'name' },
-        { text: 'Name descending', value: 'name' },
-        { text: 'Year ascending', value: 'year' },
-        { text: 'Year descending', value: 'year' },
+        { text: 'Name ascending', value: 'name', orderBy: 'asc' },
+        { text: 'Name descending', value: 'name', orderBy: 'des' },
+        { text: 'Age ascending', value: 'age', orderBy: 'asc' },
+        { text: 'Age descending', value: 'age', orderBy: 'des' },
       ],
       data: [
         { name: 'Ahmet', age: '12' },
@@ -65,13 +89,42 @@ export default defineComponent({
     const filteredData = computed(function () {
       return onFilter(state.route.query.filter, state.data);
     });
+    function sortName(orderBy) {
+      if (orderBy === 'asc') {
+        state.data.sort((a, b) => (a.name > b.name ? 1 : -1));
+      } else {
+        state.data.sort((a, b) => (a.name < b.name ? 1 : -1));
+      }
+    }
+    function sortAge(orderBy) {
+      if (orderBy === 'asc') {
+        state.data.sort((a, b) => (a.age > b.age ? 1 : -1));
+      } else {
+        state.data.sort((a, b) => (a.age < b.age ? 1 : -1));
+      }
+    }
     return {
       ...toRefs(state),
       filteredData,
       resetSearch,
+      sortAge,
+      sortName,
     };
   },
 });
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.dropdown-toggle::after {
+  display: none;
+}
+.dropdown-item {
+  color: #000000;
+  font-weight: 700;
+  &:hover {
+    background-color: #c4c4c4;
+    color: #ffffff;
+    border-radius: 4px;
+  }
+}
+</style>

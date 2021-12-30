@@ -1,21 +1,6 @@
 <template>
-  <div class="d-flex justify-content-end">
-    <div class="dropdown">
-      <span
-        class="dropdown-toggle"
-        type="button"
-        id="dropdownMenuButton1"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        <img :src="require('@/assets/images/icons/order-icon.svg')" alt="order" />
-      </span>
-      <ul class="dropdown-menu p-2 border-dark rounded-3" aria-labelledby="dropdownMenuButton1">
-        <li v-for="(item, index) in orderItems" :key="index">
-          <span role="button" class="dropdown-item"> {{ item.text }} </span>
-        </li>
-      </ul>
-    </div>
+  <div>
+    <slot name="tableHeader"></slot>
   </div>
   <table v-bind="$attrs" class="table">
     <thead>
@@ -64,10 +49,6 @@ export default defineComponent({
       type: Array,
       default: () => [],
     },
-    orderItems: {
-      type: Array,
-      default: () => [],
-    },
   },
   setup() {
     const state = reactive({});
@@ -85,18 +66,6 @@ export default defineComponent({
     background-color: #c4c4c4;
     border-radius: 4px;
     cursor: pointer;
-  }
-}
-.dropdown-toggle::after {
-  display: none;
-}
-.dropdown-item {
-  color: #000000;
-  font-weight: 700;
-  &:hover {
-    background-color: #c4c4c4;
-    color: #ffffff;
-    border-radius: 4px;
   }
 }
 </style>
