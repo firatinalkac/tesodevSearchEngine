@@ -1,18 +1,17 @@
 export default () => {
   return {
-    filterData: [],
-    onFilter: function (search, data) {
-      if (search && search.length > 0) {
-        this.filterData = data.filter((item) => {
-          const val = search.toLowerCase();
-          const title = item.name && item.name.toLowerCase();
-          if (val && title.indexOf(val) !== -1) {
-            return true;
-          } else {
-            return false;
-          }
-        });
+    onFilter(search, data) {
+      if (!(search && search.length > 0)) {
+        return data;
       }
+
+      return data.filter((item) => {
+        const val = search ? search.toLowerCase() : '';
+        const title = Object.values(item).join(' ');
+        //console.log(new RegExp(`.*${val}.*`, 'mi').test(title));
+
+        return new RegExp(`.*${val}.*`, 'mi').test(title);
+      });
     },
   };
 };

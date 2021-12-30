@@ -8,7 +8,7 @@
       :placeholder="placeholder"
       :style="{ width: `${width}` }"
       :value="modelValue"
-      @keyup="$emit('update:modelValue', $event.target.value)"
+      @input="$emit('update:modelValue', $event.target.value)"
       v-bind="$attrs"
     />
     <small v-if="error" class="error-text"> {{ error }} </small>

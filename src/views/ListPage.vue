@@ -11,25 +11,22 @@
       <button @click="resetSearch" class="btn btn-danger">Temizle</button>
     </div>
     <div class="mt-5">
-      <tesodev-table :header="header" :data="data" :orderItems="orderList"> </tesodev-table>
+      <tesodev-table :header="header" :data="filteredData" :orderItems="orderList"> </tesodev-table>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive, toRefs, watch } from 'vue';
+import { computed, defineComponent, reactive, toRefs, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
+import filter from '../plugins/filter';
 
 export default defineComponent({
   setup() {
+    const { onFilter } = filter();
     const state = reactive({
-      header: [
-        { value: 'name' },
-        { value: 'last_name' },
-        { value: 'year' },
-        { value: 'action', minWidth: 200, center: true },
-      ],
+      header: [{ value: 'name' }, { value: 'age' }],
       orderList: [
         { text: 'Name ascending', value: 'name' },
         { text: 'Name descending', value: 'name' },
@@ -37,11 +34,15 @@ export default defineComponent({
         { text: 'Year descending', value: 'year' },
       ],
       data: [
-        { name: 'Ali', last_name: 'Cebeci', year: '2012' },
-        { name: 'Veli', last_name: 'Cebeci', year: '1998' },
-        { name: 'Davut', last_name: 'Cebeci', year: '2020' },
-        { name: 'Ahmet', last_name: 'Cebeci', year: '2150' },
-        { name: 'Celal', last_name: 'Cebeci', year: '2896' },
+        { name: 'Ahmet', age: '12' },
+        { name: 'Veli', age: '15' },
+        { name: 'Ayse', age: '18' },
+        { name: 'Firat', age: '25' },
+        { name: 'Usame', age: '28' },
+        { name: 'Furki', age: '22' },
+        { name: 'Mujdat', age: '30' },
+        { name: 'Akif', age: '22' },
+        { name: 'Ali', age: '23' },
       ],
       route: useRoute(),
       router: useRouter(),
@@ -61,8 +62,12 @@ export default defineComponent({
         state.listSearch = null;
       }
     });
+    const filteredData = computed(function () {
+      return onFilter(state.route.query.filter, state.data);
+    });
     return {
       ...toRefs(state),
+      filteredData,
       resetSearch,
     };
   },
