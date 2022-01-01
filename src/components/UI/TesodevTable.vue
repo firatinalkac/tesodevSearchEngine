@@ -20,7 +20,13 @@
       </tr>
     </thead>
     <tbody class="border-0">
-      <tr class="tableRow border-bottom border-dark" v-for="(row, index) in data" :key="index">
+      <tr
+        @mouseover="hoverElement = row.id"
+        @mouseleave="hoverElement = null"
+        class="tableRow border-bottom border-dark"
+        v-for="(row, index) in data"
+        :key="index"
+      >
         <td v-for="(col, index) in header" :key="index" class="border-0 pt-5">
           <slot :name="col.value" v-bind:prop="row[col.value]" :row="row" :col="col">
             <div
@@ -51,7 +57,9 @@ export default defineComponent({
     },
   },
   setup() {
-    const state = reactive({});
+    const state = reactive({
+      hoverElement: null,
+    });
     return {
       get,
       ...toRefs(state),
@@ -60,7 +68,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .tableRow {
   &:hover {
     background-color: #c4c4c4;

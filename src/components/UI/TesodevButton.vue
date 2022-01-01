@@ -1,7 +1,8 @@
 <template>
-  <div v-bind="$attrs" class="btn btn-primary border-0" :class="classList">
+  <button v-bind="$attrs" class="btn" :class="classList">
     <slot />
-  </div>
+    {{ text }}
+  </button>
 </template>
 
 <script>
@@ -21,6 +22,34 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    danger: {
+      type: Boolean,
+      default: false,
+    },
+    outlinePrimary: {
+      type: Boolean,
+      default: false,
+    },
+    outlineDark: {
+      type: Boolean,
+      default: false,
+    },
+    textWhite: {
+      type: Boolean,
+      default: false,
+    },
+    bold: {
+      type: Boolean,
+      default: false,
+    },
+    small: {
+      type: Boolean,
+      default: false,
+    },
+    text: {
+      type: String,
+      default: null,
+    },
   },
   setup(props) {
     const state = reactive({});
@@ -28,6 +57,12 @@ export default defineComponent({
       return {
         [`button-pr`]: props.primary,
         [`button-sc`]: props.secondary,
+        [`btn-danger`]: props.danger,
+        [`btn-outline-primary`]: props.outlinePrimary,
+        [`btn-outline-dark`]: props.outlineDark,
+        [`fw-bold`]: props.bold,
+        [`text-white`]: props.textWhite,
+        [`btn-sm`]: props.small,
         [`rounded-8`]: !props.rounded,
       };
     });

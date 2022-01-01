@@ -5,14 +5,18 @@
         <img :src="require('@/assets/images/icons/tesodev.png')" width="150" alt="tesodev" />
       </span>
       <TesodevInput v-model="listSearch" width="28rem" placeholder="Search" />
-      <TesodevButton @click="router.replace({ query: { filter: listSearch } })" rounded secondary class="px-4"
-        >Search</TesodevButton
-      >
-
-      <button @click="resetSearch" class="btn btn-danger">Temizle</button>
+      <TesodevButton
+        @click="router.replace({ query: { filter: listSearch } })"
+        textWhite
+        secondary
+        class="px-4"
+        text="Search"
+        bold
+      />
+      <TesodevButton @click="resetSearch" danger bold text="Temizle" />
     </div>
     <div class="mt-5">
-      <tesodev-table :header="header" :data="filteredData">
+      <tesodev-table ref="table" :header="header" :data="computedTableData">
         <template #tableHeader>
           <div class="dropdown d-flex justify-content-end">
             <span
@@ -23,19 +27,44 @@
               aria-expanded="false"
             >
               <img :src="require('@/assets/images/icons/order-icon.svg')" alt="order" />
+              <span class="fw-bold">Order By</span>
             </span>
             <ul class="dropdown-menu p-2 border-dark rounded-3" aria-labelledby="dropdownMenuButton1">
               <li
                 v-for="(item, index) in orderList"
                 :key="index"
-                @click="item.value === 'age' ? sortAge(item.orderBy) : sortName(item.orderBy)"
+                @click="item.value === 'year' ? sortDate(item.orderBy) : sortName(item.orderBy)"
               >
                 <span role="button" class="dropdown-item"> {{ item.text }} </span>
               </li>
             </ul>
           </div>
         </template>
+        <template #country="{ row }">
+          <div class="d-flex flex-column fw-bold">
+            <span>{{ row.country }} - {{ row.city }}</span>
+            <span
+              class="fs-12"
+              :class="[
+                { 'text-white': table.hoverElement === row.id },
+                { 'text-secondary': table.hoverElement !== row.id },
+              ]"
+              >{{ row.company }} - {{ getYear(row.date) }}</span
+            >
+          </div>
+        </template>
+        <template #email="{ row }">
+          <div class="pe-5 fw-bold">Email: {{ row.email }}</div>
+        </template>
       </tesodev-table>
+      <div class="d-flex justify-content-center align-items-center mt-5">
+        <Pagination
+          ref="pagination"
+          :totalRecords="filteredData.length"
+          :perPageOptions="[5, 10, 15]"
+          v-model="pagination"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -45,33 +74,54 @@ import { computed, defineComponent, reactive, toRefs, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import filter from '../plugins/filter';
+import axios from 'axios';
+import { getYear } from '../plugins/date-utils';
+import Pagination from '../components/UI/Pagination';
 
 export default defineComponent({
+  components: { Pagination },
   setup() {
     const { onFilter } = filter();
     const state = reactive({
-      header: [{ value: 'name' }, { value: 'age' }],
+      pagination: '',
+      table: '',
+      header: [
+        { value: 'country', width: 500 },
+        { value: 'email', width: 500 },
+      ],
       orderList: [
         { text: 'Name ascending', value: 'name', orderBy: 'asc' },
         { text: 'Name descending', value: 'name', orderBy: 'des' },
-        { text: 'Age ascending', value: 'age', orderBy: 'asc' },
-        { text: 'Age descending', value: 'age', orderBy: 'des' },
+        { text: 'Year ascending', value: 'year', orderBy: 'asc' },
+        { text: 'Year descending', value: 'year', orderBy: 'des' },
       ],
-      data: [
-        { name: 'Ahmet', age: '12' },
-        { name: 'Veli', age: '15' },
-        { name: 'Ayse', age: '18' },
-        { name: 'Firat', age: '25' },
-        { name: 'Usame', age: '28' },
-        { name: 'Furki', age: '22' },
-        { name: 'Mujdat', age: '30' },
-        { name: 'Akif', age: '22' },
-        { name: 'Ali', age: '23' },
-      ],
+      data: [],
       route: useRoute(),
       router: useRouter(),
       listSearch: useRoute().query.filter,
     });
+
+    async function getMockApi() {
+      try {
+        const response = await axios.get('https://61ce37467067f600179c5e0b.mockapi.io/user');
+        state.data = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getMockApi();
+
+    const filteredData = computed(() => {
+      return onFilter(state.route.query.filter, state.data);
+    });
+
+    const computedTableData = computed(() => {
+      const data = filteredData.value;
+      const firstIndex = (state.pagination.page - 1) * state.pagination.perPage;
+      const lastPage = state.pagination.page * state.pagination.perPage;
+      return data.slice(firstIndex, lastPage);
+    });
+
     function resetSearch() {
       if (state.route.query.filter) {
         state.router.replace({ name: 'ListPage' });
@@ -79,6 +129,23 @@ export default defineComponent({
         state.listSearch = null;
       }
     }
+
+    function sortName(orderBy) {
+      if (orderBy === 'asc') {
+        state.data.sort((a, b) => (a.country > b.country ? 1 : -1));
+      } else {
+        state.data.sort((a, b) => (a.country < b.country ? 1 : -1));
+      }
+    }
+
+    function sortDate(orderBy) {
+      if (orderBy === 'asc') {
+        state.data.sort((a, b) => (a.date > b.date ? 1 : -1));
+      } else {
+        state.data.sort((a, b) => (a.date < b.date ? 1 : -1));
+      }
+    }
+
     watch(state.route, () => {
       if (state.route.query.filter) {
         state.listSearch = state.route.query.filter;
@@ -86,29 +153,14 @@ export default defineComponent({
         state.listSearch = null;
       }
     });
-    const filteredData = computed(function () {
-      return onFilter(state.route.query.filter, state.data);
-    });
-    function sortName(orderBy) {
-      if (orderBy === 'asc') {
-        state.data.sort((a, b) => (a.name > b.name ? 1 : -1));
-      } else {
-        state.data.sort((a, b) => (a.name < b.name ? 1 : -1));
-      }
-    }
-    function sortAge(orderBy) {
-      if (orderBy === 'asc') {
-        state.data.sort((a, b) => (a.age > b.age ? 1 : -1));
-      } else {
-        state.data.sort((a, b) => (a.age < b.age ? 1 : -1));
-      }
-    }
     return {
       ...toRefs(state),
       filteredData,
+      computedTableData,
       resetSearch,
-      sortAge,
+      sortDate,
       sortName,
+      getYear,
     };
   },
 });

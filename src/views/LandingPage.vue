@@ -14,10 +14,10 @@
           <div class="pb-2" v-for="(item, index) in filteredData.slice(0, 3)" :key="index">
             <div class="border-bottom border-dark pt-3 d-flex justify-content-between pb-1">
               <div class="d-flex flex-column fw-bold">
-                <span>{{ item.name }}</span>
-                <span class="fs-12 text-secondary">Jane Doe - 2016</span>
+                <span class="fs-18">{{ item.country }} - {{ item.city }}</span>
+                <span class="fs-12 text-secondary subTitle">{{ item.company }} - {{ getYear(item.date) }}</span>
               </div>
-              <div class="pe-5 fw-bold">Yaş: {{ item.age }}</div>
+              <div class="pe-5 fw-bold">Email: {{ item.email }}</div>
             </div>
           </div>
           <div v-if="filteredData.length < 1">
@@ -34,7 +34,7 @@
         </div>
       </div>
       <div>
-        <TesodevButton rounded primary class="px-4">Search</TesodevButton>
+        <TesodevButton textWhite rounded primary bold text="Search" class="px-4" />
       </div>
     </div>
   </div>
@@ -45,6 +45,8 @@ import { computed, defineComponent, reactive, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 import filter from '../plugins/filter';
+import { getYear } from '../plugins/date-utils';
+import axios from 'axios';
 
 export default defineComponent({
   setup() {
@@ -53,26 +55,27 @@ export default defineComponent({
       search: null,
       router: useRouter(),
       route: useRoute(),
-      data: [
-        { name: 'Ahmet', age: '12' },
-        { name: 'Veli', age: '15' },
-        { name: 'Ayse', age: '18' },
-        { name: 'Firat', age: '25' },
-        { name: 'Usame', age: '28' },
-        { name: 'Furki', age: '22' },
-        { name: 'Mujdat', age: '30' },
-        { name: 'Akif', age: '22' },
-        { name: 'Ali', age: '23' },
-      ],
+      data: [],
     });
     const filteredData = computed(function () {
       return onFilter(state.search, state.data);
     });
 
+    async function getMockApi() {
+      try {
+        const response = await axios.get('https://61ce37467067f600179c5e0b.mockapi.io/user');
+        state.data = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getMockApi();
+
     return {
       ...toRefs(state),
       filteredData,
       onFilter,
+      getYear,
     };
   },
 });
