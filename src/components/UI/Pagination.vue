@@ -35,6 +35,23 @@
       </option>
     </select>
   </div>
+  <!--  <div v-if="pages > 6" class="d-flex gap-3">
+    <span v-for="i in 3" :key="i"> {{ i }} </span>
+    <span>...</span>
+    <div v-if="pages >= 9" class="d-flex flex-row-reverse gap-3">
+      <span v-for="(i, index) in 3" :key="i"> {{ pages - index }} </span>
+    </div>
+    <div v-if="pages < 9" class="d-flex flex-row-reverse gap-3">
+      <span v-for="(i, index) in pages - 6" :key="i"> {{ pages - index }} </span>
+    </div>
+  </div>-->
+  <!--  <div class="d-flex gap-3">
+    <span v-if="page >= 3"> <span v-if="page - 2 !== 1">...</span> {{ page - 2 }}</span>
+    <span v-if="page >= 2">{{ page - 1 }}</span>
+    <span class="text-danger">{{ page }}</span>
+    <span v-if="page + 1 <= pages">{{ page + 1 }}</span>
+    <span v-if="page + 2 <= pages">{{ page + 2 }} <span v-if="page + 2 !== pages">...</span> </span>
+  </div>-->
 </template>
 
 <script>
