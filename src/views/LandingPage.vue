@@ -21,7 +21,7 @@
             </div>
           </div>
           <div v-if="filteredData.length < 1">
-            <div class="alert alert-warning">There were no results.</div>
+            <div class="alert alert-warning">No results found!</div>
           </div>
           <router-link
             v-else
@@ -56,6 +56,7 @@ export default defineComponent({
       router: useRouter(),
       route: useRoute(),
       data: [],
+      dataLoading: false,
     });
     const filteredData = computed(function () {
       return onFilter(state.search, state.data);

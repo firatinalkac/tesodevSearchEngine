@@ -1,5 +1,5 @@
 <template>
-  <section class="d-flex gap-2 align-items-center">
+  <section v-if="totalRecords > 0" class="d-flex gap-2 align-items-center">
     <TesodevButton
       :disabled="page === 1"
       @click="(goPage = false), changePage(-1)"
@@ -8,8 +8,8 @@
       bold
       text="Previous"
     />
-    <div class="d-flex gap-2">
-      <TesodevButton
+    <div class="d-flex">
+      <!--      <TesodevButton
         v-for="i in pages"
         :class="{ 'bg-dark-blue text-white': i === page }"
         :key="i"
@@ -17,7 +17,33 @@
         small
         :text="i"
         @click="(goPage = true), changePage(i)"
-      />
+      />-->
+      <span v-if="page - 3 > 1" class="me-2">...</span>
+
+      <div class="d-flex flex-row-reverse">
+        <div v-for="i in 3" :key="i">
+          <TesodevButton @click="(goPage = true), changePage(page - i)" class="page-button mx-1" small v-if="page > i">
+            {{ page - i }}
+          </TesodevButton>
+        </div>
+      </div>
+
+      <TesodevButton @click="(goPage = true), changePage(page)" class="page-button bg-dark-blue text-white mx-1" small>
+        {{ page }}
+      </TesodevButton>
+
+      <div v-for="i in 3" :key="i">
+        <TesodevButton
+          @click="(goPage = true), changePage(page + i)"
+          class="page-button mx-1"
+          small
+          v-if="page + i <= pages"
+        >
+          {{ page + i }}
+        </TesodevButton>
+      </div>
+
+      <span v-if="page + 3 < pages">...</span>
     </div>
     <TesodevButton
       :disabled="page === pages"
@@ -28,7 +54,7 @@
       text="Next"
     />
   </section>
-  <div class="ms-5">
+  <div v-if="totalRecords > 0" class="ms-5">
     <select @change="page = 1" v-model="perPage" class="form-select shadow-none" aria-label="Default select example">
       <option v-for="(perPage, index) in perPageOptions" :key="index" :value="perPage" selected>
         {{ perPage }}
@@ -45,13 +71,7 @@
       <span v-for="(i, index) in pages - 6" :key="i"> {{ pages - index }} </span>
     </div>
   </div>-->
-  <!--  <div class="d-flex gap-3">
-    <span v-if="page >= 3"> <span v-if="page - 2 !== 1">...</span> {{ page - 2 }}</span>
-    <span v-if="page >= 2">{{ page - 1 }}</span>
-    <span class="text-danger">{{ page }}</span>
-    <span v-if="page + 1 <= pages">{{ page + 1 }}</span>
-    <span v-if="page + 2 <= pages">{{ page + 2 }} <span v-if="page + 2 !== pages">...</span> </span>
-  </div>-->
+  <div v-if="totalRecords === 0">---</div>
 </template>
 
 <script>

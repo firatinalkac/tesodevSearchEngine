@@ -5,6 +5,7 @@
         <img :src="require('@/assets/images/icons/tesodev.png')" width="150" alt="tesodev" />
       </span>
       <TesodevInput v-model="listSearch" width="28rem" placeholder="Search" />
+
       <TesodevButton
         @click="router.replace({ query: { filter: listSearch } })"
         textWhite
@@ -13,10 +14,12 @@
         text="Search"
         bold
       />
+
       <TesodevButton @click="resetSearch" danger bold text="Temizle" />
     </div>
     <div class="mt-5">
-      <tesodev-table ref="table" :header="header" :data="computedTableData">
+      <!-- Table Start -->
+      <tesodev-table v-if="!dataLoading" ref="table" :header="header" :data="computedTableData">
         <template #tableHeader>
           <div class="dropdown d-flex justify-content-end">
             <span
@@ -35,7 +38,9 @@
                 :key="index"
                 @click="item.value === 'year' ? sortDate(item.orderBy) : sortName(item.orderBy)"
               >
-                <span role="button" class="dropdown-item"> {{ item.text }} </span>
+                <span role="button" class="dropdown-item">
+                  {{ item.text }}
+                </span>
               </li>
             </ul>
           </div>
@@ -57,6 +62,17 @@
           <div class="pe-5 fw-bold">Email: {{ row.email }}</div>
         </template>
       </tesodev-table>
+      <div class="d-flex justify-content-center alert alert-danger" v-if="filteredData.length === 0 && !dataLoading">
+        No results found!
+      </div>
+      <div v-if="dataLoading" class="text-center">
+        <div class="spinner-grow" style="width: 3rem; height: 3rem" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <!-- Table Finish -->
+
+      <!-- Pagination Start -->
       <div class="d-flex justify-content-center align-items-center mt-5">
         <Pagination
           ref="pagination"
@@ -65,6 +81,7 @@
           v-model="pagination"
         />
       </div>
+      <!-- Pagination Finish -->
     </div>
   </div>
 </template>
@@ -85,6 +102,7 @@ export default defineComponent({
     const state = reactive({
       pagination: '',
       table: '',
+      dataLoading: false,
       header: [
         { value: 'country', width: 500 },
         { value: 'email', width: 500 },
@@ -102,11 +120,14 @@ export default defineComponent({
     });
 
     async function getMockApi() {
+      state.dataLoading = true;
       try {
         const response = await axios.get('https://61ce37467067f600179c5e0b.mockapi.io/user');
         state.data = response.data;
       } catch (error) {
         console.log(error);
+      } finally {
+        state.dataLoading = false;
       }
     }
     getMockApi();
