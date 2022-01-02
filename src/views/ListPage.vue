@@ -157,6 +157,7 @@ export default defineComponent({
       } else {
         state.data.sort((a, b) => (a.country < b.country ? 1 : -1));
       }
+      state.pagination.page = 1;
     }
 
     function sortDate(orderBy) {
@@ -165,6 +166,7 @@ export default defineComponent({
       } else {
         state.data.sort((a, b) => (a.date < b.date ? 1 : -1));
       }
+      state.pagination.page = 1;
     }
 
     watch(state.route, () => {

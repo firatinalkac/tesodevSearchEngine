@@ -7,10 +7,9 @@ export default () => {
 
       return data.filter((item) => {
         const val = search ? search.toLowerCase() : '';
-        const title = Object.values(item).join(' ');
-        //console.log(new RegExp(`.*${val}.*`, 'mi').test(title));
+        const title = Object.values(item).join(' ').toLowerCase();
 
-        return new RegExp(`.*${val}.*`, 'mi').test(title);
+        return title.includes(val);
       });
     },
   };

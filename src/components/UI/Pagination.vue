@@ -9,15 +9,6 @@
       text="Previous"
     />
     <div class="d-flex">
-      <!--      <TesodevButton
-        v-for="i in pages"
-        :class="{ 'bg-dark-blue text-white': i === page }"
-        :key="i"
-        class="page-button"
-        small
-        :text="i"
-        @click="(goPage = true), changePage(i)"
-      />-->
       <span v-if="page - 3 > 1" class="me-2">...</span>
 
       <div class="d-flex flex-row-reverse">
@@ -61,16 +52,6 @@
       </option>
     </select>
   </div>
-  <!--  <div v-if="pages > 6" class="d-flex gap-3">
-    <span v-for="i in 3" :key="i"> {{ i }} </span>
-    <span>...</span>
-    <div v-if="pages >= 9" class="d-flex flex-row-reverse gap-3">
-      <span v-for="(i, index) in 3" :key="i"> {{ pages - index }} </span>
-    </div>
-    <div v-if="pages < 9" class="d-flex flex-row-reverse gap-3">
-      <span v-for="(i, index) in pages - 6" :key="i"> {{ pages - index }} </span>
-    </div>
-  </div>-->
   <div v-if="totalRecords === 0">---</div>
 </template>
 
@@ -79,6 +60,7 @@ import { defineComponent, reactive, toRefs, computed } from 'vue';
 
 export default defineComponent({
   props: ['totalRecords', 'perPageOptions'],
+
   setup(props, { emit }) {
     const state = reactive({
       page: 1,
@@ -114,8 +96,6 @@ export default defineComponent({
 <style scoped lang="scss">
 .page-button {
   border: 1px solid $primary;
-  /*height: 31px;
-  width: 31px;*/
   font-weight: 700;
 
   &:hover {
